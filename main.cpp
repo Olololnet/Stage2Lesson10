@@ -107,7 +107,8 @@ void Exercise1()
 
 int main()
 {
-    Exercise2();
+
+//    Exercise2();
 //    Exercise1();
 
     return 0;
