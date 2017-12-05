@@ -4,28 +4,28 @@
 #include <fstream>
 #include <queue>
 
+#define ERASE_NOT_NEEDED 2
+#define CHANGE_STRING_NOT_NEEDED 1
+
 void Exercise2()
 {
     // Exercise2: вывести последние k строк файла
 
     const int iShowLastXLines = 5;
 
-    std::ifstream fsFile;
-    fsFile.open("/home/pem/development/SomeTextFile.txt", std::ios::in);
+    std::ifstream fsFile("/home/pem/development/SomeTextFile.txt");
 
-    if (!fsFile)
+    if (!fsFile.is_open())
     {
         std::cout << "File not found." << std::endl;
         return;
     }
 
     std::queue<std::string> quStringQueue;
+    std::string strCurrentLine;
 
-    while (!fsFile.eof())
+    while (std::getline(fsFile, strCurrentLine))
     {
-        std::string strCurrentLine;
-        std::getline(fsFile, strCurrentLine);
-
         if (quStringQueue.size() >= iShowLastXLines)
             quStringQueue.pop();
 
@@ -36,8 +36,6 @@ void Exercise2()
         std::cout << quStringQueue.front() << std::endl;
         quStringQueue.pop();
     }
-
-    fsFile.close();
 }
 
 template <typename T>
@@ -56,14 +54,14 @@ void ChangeString(std::string& strBaseString, const int& iCharCount,
     const int iReplaceStartPos = iCurrentStringIndex + 1;
     strBaseString.replace(iReplaceStartPos, iSubStringLength, strSubString);
 
-    if (iCharCount == 2)
+    if (iCharCount == ERASE_NOT_NEEDED)
         iCurrentStringIndex += iCharCount;
     else
     {
         const int iCharCountWithoutFirst = iCharCount - 1;
         const int iCharToEraseCount = iCharCountWithoutFirst - iSubStringLength;
         strBaseString.erase(iReplaceStartPos + iSubStringLength, iCharToEraseCount);
-        iStringLength = strBaseString.length();
+        iStringLength = (int)strBaseString.length();
 
         iCurrentStringIndex += iSubStringLength;
     }
@@ -71,7 +69,7 @@ void ChangeString(std::string& strBaseString, const int& iCharCount,
 
 void CompressString(std::string& strBaseString)
 {
-    int iStringLength = strBaseString.length();
+    int iStringLength = (int)strBaseString.length();
 
     for (int i = 0; i < iStringLength;)
     {
@@ -86,7 +84,7 @@ void CompressString(std::string& strBaseString)
                 break;
         }
 
-        if (iCharCount == 1)
+        if (iCharCount == CHANGE_STRING_NOT_NEEDED)
             ++i;
         else if (iCharCount > 1)
             ChangeString(strBaseString, iCharCount, i, iStringLength);
